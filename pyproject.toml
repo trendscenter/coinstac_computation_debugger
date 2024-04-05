@@ -1,0 +1,18 @@
+[project]
+name = "coinstac_computation_debugger"
+version = "0.0.1"
+authors = [
+  { name="Sunitha Basodi" },
+]
+description = "This software help in real time debugging coinstac computation code without any modification."
+readme = "README.md"
+requires-python = ">=3.8"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+Homepage = "https://github.com/trendscenter/coinstac_computation_debugger"
+Issues = "https://github.com/trendscenter/coinstac_computation_debugger/issues"
