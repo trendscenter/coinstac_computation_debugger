@@ -4,3 +4,7 @@ https://coinstac.org/
 
 ## Usage 
 Refer to "debugger_usage_example.py" for usage instructions
+
+## Installation
+Install from pypi: https://pypi.org/project/coinstac-computation-debugger/ 
+
