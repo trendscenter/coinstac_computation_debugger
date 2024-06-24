@@ -85,24 +85,28 @@ class CoinstacComputationDebugger:
         prev_rem_cache_dict = {}
         prev_rem_output = None
         prev_local_outputs_dict = None
+        prev_local_cache_dicts = {}
         for curr_iter in range(1, num_iterations+1):
             curr_local_output_dicts={}
             curr_local_call = __local_calls.pop(0)
             for client_id in range(self.num_clients):
                 if curr_iter ==1 :
                     new_args = self.get_local_args(inputspec[client_id], {}, curr_iter, client_id, first_run=True)
+                    prev_local_cache_dicts[f'local{client_id}']={}
                 else:
                     temp_prev_local_output_dict=prev_local_outputs_dict[f'local{client_id}']
-                    prev_local_cache_dict=temp_prev_local_output_dict['cache'] if type(temp_prev_local_output_dict) is dict \
-                                                else json.loads(temp_prev_local_output_dict)['cache']
-
+                    #prev_local_cache_dict=temp_prev_local_output_dict['cache'] if type(temp_prev_local_output_dict) is dict \
+                    #                            else json.loads(temp_prev_local_output_dict)['cache']
                     new_args = self.get_local_args(prev_rem_output,
-                                                   prev_local_cache_dict,
+                                                   prev_local_cache_dicts[f'local{client_id}'],
                                                    curr_iter, client_id, first_run=False)
-                    prev_rem_cache_dict= prev_rem_output['cache'] if type(prev_rem_output) is dict \
-                                            else json.loads(prev_rem_output)['cache']
+                    prev_rem_cache_dict.update(prev_rem_output['cache'] if type(prev_rem_output) is dict \
+                                            else json.loads(prev_rem_output)['cache'])
 
-                curr_local_output_dicts[f'local{client_id}'] = curr_local_call(new_args)
+                local_output= curr_local_call(new_args)
+                curr_local_output_dicts[f'local{client_id}'] = local_output
+                prev_local_cache_dicts[f'local{client_id}'].update(local_output['cache'] if type(local_output) is dict
+                                                                   else json.loads(local_output)['cache'] )
 
             curr_rem_call = __remote_calls.pop(0)
             curr_rem_output = curr_rem_call(self.get_remote_args(curr_local_output_dicts, prev_rem_cache_dict, curr_iter))
