@@ -2,11 +2,12 @@ import os
 import json
 
 class CoinstacComputationDebugger:
-    def __init__(self, num_clients, path_to_test_input_dir="../test", debug_dir="../test/debug"):
+    def __init__(self, num_clients, path_to_test_input_dir="../test", debug_dir="../test/debug", save_output_to_file = "computation_output"):
         print("Initializing COINSTAC computation debugger..")
         self.num_clients = num_clients
         self.path_to_test_input_dir = path_to_test_input_dir
         self.__temp_dir_prefix = "temp_"
+        self.save_output_to_file = save_output_to_file
 
         self.debug_dir = debug_dir
         os.makedirs(self.debug_dir, exist_ok=True)
@@ -42,6 +43,12 @@ class CoinstacComputationDebugger:
             else:
                 new_input_dict[key] = key_val
         return new_input_dict
+
+    def save_output_json(self, outfile_name, parsed_json_string):
+        text_file = open(outfile_name, "w")
+        n = text_file.write(parsed_json_string)
+        text_file.close()
+        print("output json written to: ", outfile_name)
 
     def get_local_args(self, input_dict, cache_dict, iteration_num, client_id, first_run=False):
         orig_input_dict = input_dict if type(input_dict) is dict else json.loads(input_dict)
@@ -113,4 +120,12 @@ class CoinstacComputationDebugger:
 
             prev_local_outputs_dict = curr_local_output_dicts
             prev_rem_output = curr_rem_output
+
+        # print(parsed_output)
+        if self.save_output_to_file:
+            parsed_output = json.dumps(prev_rem_output, indent=4, sort_keys=False)
+
+            outfile_name = os.path.join(self.debug_dir, self.save_output_to_file + '.json')
+            self.save_output_json(outfile_name, parsed_output)
+
         return prev_local_outputs_dict, prev_rem_output
